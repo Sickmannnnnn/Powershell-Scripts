@@ -1,9 +1,45 @@
-﻿$defaultDirectory = "C:\Users\sat3310\Documents\lab04\data\"                                    #sets the variable defaultDirectory to the location specified
-$nounFile = "nouns.txt"                                                                         #sets the variable nounFile to the String specified
-$agentNounFile = "agentnouns.txt"                                                               #sets the variable agentNounFile to the String specified
+﻿$nounFile
+
+Write-Host "This script requires a .txt file with nouns and a .txt file with agent nouns, delimited by spaces"
+Write-Host "If you do not have the nouns downloaded, you can download them here: https://www.desiquintans.com/nounlist"
+# Load the necessary assembly
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+
+# Create a MessageBox object
+$result = [System.Windows.Forms.MessageBox]::Show('Select a file the contains nouns', 'Confirmation', 'OKCancel', 'Question')
+
+if ($result -eq 'OK') {
+    $openFileDialog = New-Object System.Windows.Forms.OpenFileDialog
+
+    # Set properties for the dialog
+    $openFileDialog.InitialDirectory = [Environment]::GetFolderPath('Desktop')  # Set the initial directory
+    $openFileDialog.Filter = 'All Files (*.*)|*.*'                             # Set file filter
+    n
+    # Show the dialog and check if the user clicked OK
+    if ($openFileDialog.ShowDialog() -eq 'OK') {
+        # Retrieve the selected file path
+        $nounFile = $openFileDialog.FileName
+        Write-Host "Selected File: $nounFile"
+        }
+    else{
+        Write-Host "no file selected"
+        }
+} 
+else {
+    # User clicked Cancel or closed the dialog, handle accordingly
+    Write-Host "User canceled the action."
+}
+
+
+$wordList = Get-Content $nounFile 
+
+# Filter agent nouns (words ending in -er or -or)
+$agentNouns = $wordList | Where-Object { $_ -match "er$" -or $_ -match "or$" }
+$nouns = $wordList | Where-Object { $_ -notmatch "er$" -or $_ -notmatch "or$" }
+
                 
-$nouns = get-content $defaultdirectory$nounFile                                                 #sets the array nouns to the contents of the file in the default directory at the nouns file
-$agentNouns = get-content $defaultDirectory$agentNounFile                                       #sets the array agentNouns to the contents of the file in the default directory at the agent nouns file
+                                                    
 $numNouns = $nouns.Count                                                                        #sets the variable numNouns to the length of the nouns array
 $numAgent = $agentNouns.Count                                                                   #sets the variable numNouns to the length of the nouns array
 
@@ -16,7 +52,7 @@ while($userDebug -ne "y" -and $userDebug -ne "n"){                              
 if($userDebug -eq "y"){                                                                         #testing whether the user would like to debug by checking if the debug variable is equal to "y"
     $debug = $true                                                                              #setting the debug boolean to true so that the debug methods are entered
     }
-        
+        "C:\Users\zacks\OneDrive\Documents\Data\nouns.txt"
 if($debug -eq $true){                                                                           #On we are debugging by checking if the debug variable is true
     Write-Host "The default directory is at $defaultDirectory"-ForegroundColor Green            #tell the user where the default directory is (The color of the words is changed to green using the foreground command)
     $filesSearch = Get-ChildItem -Path $defaultDirectory -File                                  #puts all of the files that are in default directory into the array filesSearch
